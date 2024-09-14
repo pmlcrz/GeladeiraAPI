@@ -1,0 +1,17 @@
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Infrastructure.deps.json
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Infrastructure.dll
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Infrastructure.pdb
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Application.dll
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Domain.dll
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Application.pdb
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\bin\Debug\net8.0\Domain.pdb
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfoInputs.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfo.cs
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastr.15EFFBFE.Up2Date
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.dll
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\refint\Infrastructure.dll
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll

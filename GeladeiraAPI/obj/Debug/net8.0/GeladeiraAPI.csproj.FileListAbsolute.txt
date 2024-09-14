@@ -1,0 +1,7 @@
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.csproj.AssemblyReference.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.AssemblyInfoInputs.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.AssemblyInfo.cs
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.csproj.CoreCompileInputs.cache
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\vicsf\source\repos\curso #c\GeladeiraAPI\GeladeiraAPI\obj\Debug\net8.0\GeladeiraAPI.MvcApplicationPartsAssemblyInfo.cache
