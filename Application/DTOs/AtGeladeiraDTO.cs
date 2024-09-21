@@ -1,26 +1,54 @@
-﻿using AutoMapper;
+using Application.DTOs;
+using System;
 using System.ComponentModel.DataAnnotations;
+using Xunit;
+using System.Collections.Generic;
 
-namespace Application.DTOs
+namespace GeladeiraAPI.Tests
 {
-    public class AtGeladeiraDTO
+    public class AtGeladeiraDTOTests
     {
-        [Key]
-        public int Id { get; set; }
+        [Fact]
+        public void AtGeladeiraDTO_ValidDTO_ShouldPassValidation()
+        {
+            var dto = new AtGeladeiraDTO
+            {
+                Id = 1,
+                Nome = "Geladeira A",
+                Posicao = 3,
+                Andar = 2,
+                Container = 1
+            };
 
-        [Required]
-        public required string Nome { get; set; }
+            var validationResults = ValidateModel(dto);
 
-        [Required]
-        [Range(1, 5, ErrorMessage = "A posição deve ser um valor entre 1 e 5.")]
-        public int Posicao { get; set; }
+            Assert.True(validationResults.Count == 0); 
+        }
 
-        [Required]
-        [Range(1, 4, ErrorMessage = "O andar deve ser um valor entre 1 e 4.")]
-        public int Andar { get; set; }
+        [Fact]
+        public void AtGeladeiraDTO_InvalidPosicao_ShouldFailValidation()
+        {
+            var dto = new AtGeladeiraDTO
+            {
+                Id = 1,
+                Nome = "Geladeira A",
+                Posicao = 6, 
+                Andar = 2,
+                Container = 1
+            };
 
-        [Required]
-        [Range(1, 4, ErrorMessage = "O container deve ser um valor entre 1 e .")]
-        public int Container { get; set; }
+            var validationResults = ValidateModel(dto);
+
+            Assert.True(validationResults.Count > 0);
+            Assert.Contains(validationResults, v => v.ErrorMessage.Contains("A posição deve ser um valor entre 1 e 5."));
+        }
+
+        private IList<ValidationResult> ValidateModel(object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(model, null, null);
+            Validator.TryValidateObject(model, validationContext, validationResults, true);
+            return validationResults;
+        }
     }
 }
