@@ -1,37 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure;
+using Xunit;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace Infrastructure.Migrations
+namespace GeladeiraAPI.Tests.IntegrationTests
 {
-    /// <inheritdoc />
-    public partial class Initial : Migration
+    public class MigrationTests
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+        [Fact]
+        public async Task Database_ShouldHaveItensTable()
         {
-            migrationBuilder.CreateTable(
-                name: "Itens",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Posicao = table.Column<int>(type: "int", nullable: false),
-                    Andar = table.Column<int>(type: "int", nullable: false),
-                    Container = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Itens", x => x.Id);
-                });
-        }
+            var options = new DbContextOptionsBuilder<GeladeiraContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "Itens");
+            using (var context = new GeladeiraContext(options))
+            {
+                await context.Database.EnsureCreatedAsync();  // Certifica-se de que o banco está criado
+
+                var tableExists = await context.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Itens'");
+
+                Assert.Equal(1, tableExists);
+            }
         }
     }
 }
