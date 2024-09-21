@@ -1,117 +1,144 @@
 using Application.DTOs;
-using AutoMapper;
 using Domain;
-using Infrastructure;
+using Geladeira.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Services.Interfaces;
-using static Infrastructure.GeladeiraRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace Geladeira.Controllers
+namespace GeladeiraAPI.Tests
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ItemController : ControllerBase
+    public class ItemControllerTests
     {
-        private readonly IService<ItemModel> _itemService;
-        private readonly GeladeiraRepository _repositorio;
-        private readonly IMapper _mapper;
+        private readonly Mock<IService<ItemModel>> _mockService;
+        private readonly ItemController _controller;
 
-
-
-        public ItemController(IService<ItemModel> itemService, GeladeiraRepository repositorio, IMapper mapper)
+        public ItemControllerTests()
         {
-            _itemService = itemService;
-            _repositorio = repositorio;
-            _mapper = mapper;
+            _mockService = new Mock<IService<ItemModel>>();
+            _controller = new ItemController(_mockService.Object, null, null); 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ObterTodos()
+        [Fact]
+        public async Task ObterTodos_ShouldReturnOkResult_WithListOfItems()
         {
-            try {
-                var itens = await _itemService.ObterTodosAsync();
-                if (!itens.Any())
-                {
-                    return NoContent();
-                }
-                return Ok(itens);
-            }
-            catch (Exception e)
+            var items = new List<ItemModel>
             {
-                return StatusCode(500, e.Message);
-            }
+                new ItemModel { Id = 1, Nome = "Item 1", Posicao = 2, Andar = 3, Container = 1 },
+                new ItemModel { Id = 2, Nome = "Item 2", Posicao = 3, Andar = 2, Container = 2 }
+            };
+            _mockService.Setup(s => s.ObterTodosAsync()).ReturnsAsync(items);
+
+            var result = await _controller.ObterTodos();
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnItems = Assert.IsType<List<ItemModel>>(okResult.Value);
+            Assert.Equal(2, returnItems.Count);
         }
 
-
-
-        [HttpGet("Buscar/{id}")]
-        public async Task<IActionResult> ObterPorId(int id)
+        [Fact]
+        public async Task ObterTodos_ShouldReturnNoContent_WhenNoItems()
         {
-            try
-            {
-                var item = await _itemService.ObterPorIdAsync(id);
+            _mockService.Setup(s => s.ObterTodosAsync()).ReturnsAsync(new List<ItemModel>());
 
-                if (item == null)
-                {
-                    return NotFound($"O item: {id} nao foi encontrado.");
-                }
+            var result = await _controller.ObterTodos();
 
-                return Ok(item);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, $"Erro: {e.Message}");
-            }
+            Assert.IsType<NoContentResult>(result);
         }
 
-        [HttpPost("adicionar")]
-        public async Task<IActionResult> Adicionar([FromBody] ItemModel item)
+        [Fact]
+        public async Task ObterPorId_ShouldReturnOk_WhenItemExists()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var item = new ItemModel { Id = 1, Nome = "Item Teste", Posicao = 2, Andar = 3, Container = 1 };
+            _mockService.Setup(s => s.ObterPorIdAsync(1)).ReturnsAsync(item);
 
-            try
-            {
-                var novoItem = await _itemService.AdicionarAsync(item);
-                if (novoItem == null)
-                {
-                    return BadRequest("Erro ao adicionar item.");
-                }
-                return CreatedAtAction(nameof(ObterPorId), new { id = novoItem.Id }, novoItem);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro no servidor: {ex.Message}");
-            }
+            var result = await _controller.ObterPorId(1);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnItem = Assert.IsType<ItemModel>(okResult.Value);
+            Assert.Equal(1, returnItem.Id);
         }
 
-        [HttpPut("atualizar")]
-        public async Task<IActionResult> Atualizar(int id, [FromBody] ItemModel item)
+        [Fact]
+        public async Task ObterPorId_ShouldReturnNotFound_WhenItemDoesNotExist()
         {
-            if (id != item.Id) return BadRequest("Erro ao atualizar item.");
-            var itemAtualizado = await _itemService.AtualizarAsync(item);
-            if (itemAtualizado == null) return NotFound();
-            return Ok(itemAtualizado);
+            _mockService.Setup(s => s.ObterPorIdAsync(1)).ReturnsAsync((ItemModel)null);
+
+            var result = await _controller.ObterPorId(1);
+
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Remover(int id)
+        [Fact]
+        public async Task Adicionar_ShouldReturnCreatedAtAction_WhenItemIsValid()
         {
+            var item = new ItemModel { Id = 1, Nome = "Novo Item", Posicao = 2, Andar = 3, Container = 1 };
+            _mockService.Setup(s => s.AdicionarAsync(item)).ReturnsAsync(item);
 
-            try
-            {
-                await _itemService.RemoverAsync(id);
-                return Ok("Item removid.");
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            
+            var result = await _controller.Adicionar(item);
+
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            var returnItem = Assert.IsType<ItemModel>(createdResult.Value);
+            Assert.Equal(1, returnItem.Id);
+        }
+
+        [Fact]
+        public async Task Adicionar_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+        {
+            _controller.ModelState.AddModelError("Nome", "O campo Nome é obrigatório.");
+
+            var result = await _controller.Adicionar(new ItemModel());
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Atualizar_ShouldReturnOk_WhenItemIsUpdated()
+        {
+            var item = new ItemModel { Id = 1, Nome = "Item Atualizado", Posicao = 2, Andar = 3, Container = 1 };
+            _mockService.Setup(s => s.AtualizarAsync(item)).ReturnsAsync(item);
+
+            var result = await _controller.Atualizar(1, item);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnItem = Assert.IsType<ItemModel>(okResult.Value);
+            Assert.Equal("Item Atualizado", returnItem.Nome);
+        }
+
+        [Fact]
+        public async Task Atualizar_ShouldReturnBadRequest_WhenIdDoesNotMatch()
+        {
+            var item = new ItemModel { Id = 1, Nome = "Item Atualizado", Posicao = 2, Andar = 3, Container = 1 };
+
+            var result = await _controller.Atualizar(2, item);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Remover_ShouldReturnOk_WhenItemIsRemoved()
+        {
+            _mockService.Setup(s => s.RemoverAsync(1)).Returns(Task.CompletedTask);
+
+            var result = await _controller.Remover(1);
+
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Remover_ShouldReturnStatusCode500_WhenExceptionOccurs()
+        {
+            
+            _mockService.Setup(s => s.RemoverAsync(1)).ThrowsAsync(new Exception("Erro ao remover item"));
+
+            var result = await _controller.Remover(1);
+
+            var statusCodeResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, statusCodeResult.StatusCode);
         }
     }
 }
-
-
