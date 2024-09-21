@@ -1,28 +1,90 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Domain;
+using System;
+using System.ComponentModel.DataAnnotations;
+using Xunit;
+using System.Collections.Generic;
 
-namespace Domain
+namespace GeladeiraAPI.Tests
 {
-    public class ItemModel
+    public class ItemModelTests
     {
-        [Required]
-        public required string Nome { get; set; }
+        [Fact]
+        public void ItemModel_ValidModel_ShouldPassValidation()
+        {
+            var item = new ItemModel
+            {
+                Nome = "Item 1",
+                Posicao = 3,
+                Andar = 2,
+                Container = 1,
+                Id = 1 
+            };
 
-        [Required]
-        [Range(1, 5, ErrorMessage = "A posição deve ser um valor entre 1 e 5.")]
-        public int Posicao { get; set; }
+            var validationResults = ValidateModel(item);
 
-        [Required]
-        [Range(1, 4, ErrorMessage = "O andar deve ser um valor entre 1 e 4.")]
-        public int Andar { get; set; }
+            Assert.True(validationResults.Count == 0); 
+        }
 
-        [Required]
-        [Range(1, 4, ErrorMessage = "O container deve ser um valor entre 1 e 4.")]
-        public int Container { get; set; }
+        [Fact]
+        public void ItemModel_InvalidPosicao_ShouldFailValidation()
+        {
+            var item = new ItemModel
+            {
+                Nome = "Item 1",
+                Posicao = 6, 
+                Andar = 2,
+                Container = 1,
+                Id = 1
+            };
 
-        [Key]
-        [Range(1, 4, ErrorMessage = "O container deve ser um valor entre 1 e .")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+            var validationResults = ValidateModel(item);
+
+            Assert.True(validationResults.Count > 0);
+            Assert.Contains(validationResults, v => v.ErrorMessage.Contains("A posição deve ser um valor entre 1 e 5."));
+        }
+
+        [Fact]
+        public void ItemModel_EmptyNome_ShouldFailValidation()
+        {
+            var item = new ItemModel
+            {
+                Nome = "", 
+                Posicao = 3,
+                Andar = 2,
+                Container = 1,
+                Id = 1
+            };
+
+            var validationResults = ValidateModel(item);
+
+            Assert.True(validationResults.Count > 0);
+            Assert.Contains(validationResults, v => v.ErrorMessage.Contains("The Nome field is required"));
+        }
+
+        [Fact]
+        public void ItemModel_InvalidContainer_ShouldFailValidation()
+        {
+            var item = new ItemModel
+            {
+                Nome = "Item 1",
+                Posicao = 3,
+                Andar = 2,
+                Container = 5, 
+                Id = 1
+            };
+
+            var validationResults = ValidateModel(item);
+
+            Assert.True(validationResults.Count > 0);
+            Assert.Contains(validationResults, v => v.ErrorMessage.Contains("O container deve ser um valor entre 1 e 4."));
+        }
+
+        private IList<ValidationResult> ValidateModel(object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(model, null, null);
+            Validator.TryValidateObject(model, validationContext, validationResults, true);
+            return validationResults;
+        }
     }
 }
