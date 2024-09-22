@@ -59,4 +59,21 @@ Este projeto utiliza o Entity Framework para o gerenciamento de banco de dados.
 Além do Entity Framework, o projeto também utiliza ADO.NET para interações diretas com o banco de dados, utilizando `SqlConnection` e `SqlCommand` para executar comandos SQL.
 
 
+## Testes
+
+Este projeto inclui testes unitários para validar o comportamento correto das operações CRUD, validações e respostas do controller.
+
+### Ferramentas Utilizadas
+- **xUnit**: Framework utilizado para a execução dos testes unitários.
+- **Moq**: Ferramenta utilizada para criar mocks das dependências injetadas, como os serviços.
+
+### Executando os Testes
+
+Para rodar os testes unitários, execute o seguinte comando no terminal na raiz do projeto:
+
+```bash
+dotnet test
+```` 
+
+
 Aluna: Pamela Cruz
